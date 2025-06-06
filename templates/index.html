@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Rechnungserfassung</title>
+  <script>
+    function addRow() {
+      const table = document.getElementById('items');
+      const idx = table.rows.length - 1; // minus header row
+      const row = table.insertRow();
+      row.innerHTML =
+        '<td><input name="pos_' + idx + '"></td>' +
+        '<td><input name="country_' + idx + '"></td>' +
+        '<td><input name="article_' + idx + '"></td>' +
+        '<td><input name="description_' + idx + '"></td>' +
+        '<td><input name="unit_' + idx + '"></td>' +
+        '<td><input name="quantity_' + idx + '"></td>' +
+        '<td><input name="net_value_' + idx + '"></td>';
+    }
+    window.addEventListener('DOMContentLoaded', (event) => {
+      if (document.getElementById('items').rows.length === 1) {
+        addRow();
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>Rechnung erfassen</h1>
+  <form method="post">
+    <h2>Metadaten</h2>
+    <label>Lieferant: <input name="supplier" required></label><br>
+    <label>Rechnungsdatum: <input type="date" name="invoice_date" required></label><br>
+    <label>Rechnungsnummer: <input name="invoice_number" required></label><br>
+    <label>Kundennummer: <input name="customer_number"></label><br>
+
+    <h2>Positionen</h2>
+    <table id="items" border="1">
+      <tr>
+        <th>Pos</th>
+        <th>Länderkode</th>
+        <th>Artikel</th>
+        <th>Beschreibung</th>
+        <th>Einheit</th>
+        <th>Menge</th>
+        <th>Netto</th>
+      </tr>
+    </table>
+    <button type="button" onclick="addRow()">Zeile hinzufügen</button><br><br>
+    <button type="submit">Speichern</button>
+  </form>
+
+  <h2>Bisher erfasste Rechnungen</h2>
+  {% for inv in invoices %}
+    <div style="margin-bottom: 20px;">
+      <strong>{{ loop.index }}. {{ inv.supplier }} {{ inv.invoice_number }} vom {{ inv.invoice_date }}</strong>
+      <ul>
+        {% for item in inv.items %}
+          <li>{{ item.pos }} - {{ item.description }} ({{ item.quantity }} {{ item.unit }})</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+</body>
+</html>
